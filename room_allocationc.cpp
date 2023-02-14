@@ -39,48 +39,51 @@ signed main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL), cout.tie(NULL);
-    ll test = 1;
-    // cin >> test;
+    ll ans[200010];
+    read(n);
+    vector<pair<pair<ll, ll>, ll>> v;
 
-    while (test--)
+    loop(i, n)
     {
-
-        read(x);
-        read(n);
-        multiset<ll> st1;
-        set<ll> st;
-        st.insert(0);
-        st.insert(x);
-        forne(i, n)
+        ll x, y;
+        cin >> x >> y;
+        v.pb({{x, y}, i});
+    }
+    sort(v.begin(), v.end());
+    priority_queue<pair<ll, ll>, vector<pair<ll, ll>>, greater<pair<ll, ll>>> pq;
+    ll lasttime = 0;
+    loop(i, n)
+    {
+        if (pq.size() == 0)
         {
-            ll a;
-            cin >> a;
-            // cout << a << endl;
+            lasttime++;
+            pq.push({v[i].first.second, lasttime});
+            ans[v[i].second] = lasttime;
+        }
+        else
+        {
+            pair<ll, ll> mintime = pq.top();
 
-            auto it1 = st.upper_bound(a);
-            // cout << *it1 << endl;
-            it1--;
-            auto it2 = it1;
-            it1++;
-            ll ans = max(*it1 - a, a - *it2);
-            // cout << *it1 << " " << *it2 << endl;
-
-            if (st1.find(*it1 - *it2) != st1.end())
+            if (v[i].first.first > pq.top().first)
             {
-                st1.erase(st1.find(*it1 - *it2));
+                pq.pop();
+                pq.push({v[i].first.second, mintime.second});
+                ans[v[i].second] = mintime.second;
             }
-            st1.insert(*it1 - a);
-            st1.insert(a - *it2);
-
-            // cout << ans << endl;
-            st.insert(a);
-
-            auto it4 = st1.end();
-
-            it4--;
-            cout << *it4 << " ";
+            else
+            {
+                lasttime++;
+                pq.push({v[i].first.second, lasttime});
+                ans[v[i].second] = lasttime;
+            }
         }
     }
+    cout << lasttime << endl;
+    for (ll i = 0; i < n; i++)
+    {
+        cout << ans[i] << " ";
+    }
+    nl;
 
     return 0;
 }
